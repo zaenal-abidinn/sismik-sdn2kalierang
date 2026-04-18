@@ -8,7 +8,7 @@ import { RaporView } from './_components/rapor-view';
 import { getSemesters, getClasses } from '@/app/actions/teachers';
 
 export default async function RaporPage() {
-  const [semesters, classes] = await Promise.all([getSemesters(), getClasses()]);
+  const semesters = await getSemesters();
 
   return (
     <div className="space-y-6">
@@ -18,7 +18,6 @@ export default async function RaporPage() {
       />
       <RaporView
         semesters={semesters.map((s) => ({ id: s.id, name: s.name }))}
-        classes={classes.map((c) => ({ id: c.id, name: c.name }))}
       />
     </div>
   );
