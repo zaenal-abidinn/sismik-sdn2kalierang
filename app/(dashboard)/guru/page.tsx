@@ -1,5 +1,5 @@
 import { PageHeader } from '@/components/shared/page-header';
-import { getTeachers, getSubjects } from '@/app/actions/teachers';
+import { getTeachers, getSubjects, getClasses, getSemesters, getTeacherSubjects, deleteSubject } from '@/app/actions/teachers';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,30 +11,56 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { PrintButton } from '@/components/shared/print-button';
 import { ROLE_LABELS } from '@/types';
-import { GraduationCap, BookOpen } from 'lucide-react';
+import { GraduationCap, BookOpen, Plus, Trash2, Settings2 } from 'lucide-react';
 import { EmptyState } from '@/components/shared/empty-state';
+import { SubjectFormWrapper } from './_components/subject-form-wrapper';
+import { AssignmentManager } from './_components/assignment-manager';
+import { createClient } from '@/lib/supabase/server';
+import { TeacherEditForm } from './_components/teacher-edit-form';
 
 export default async function GuruPage() {
-  const [teachers, subjects] = await Promise.all([getTeachers(), getSubjects()]);
+  const [teachers, subjects, classes, semesters, assignments] = await Promise.all([
+    getTeachers(), 
+    getSubjects(),
+    getClasses(),
+    getSemesters(),
+    getTeacherSubjects()
+  ]);
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: profile } = await supabase.from('profiles').select('role').eq('user_id', user?.id).single();
+  const canManageTeachers = ['superadmin', 'kepala_sekolah', 'tata_usaha'].includes(profile?.role || '');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
       <PageHeader
         title="Guru & Mata Pelajaran"
-        description="Kelola data guru dan mata pelajaran"
+        description="Kelola data guru, mata pelajaran, dan penugasan wali kelas."
+        action={
+          <div className="flex gap-2 print:hidden">
+            <PrintButton />
+          </div>
+        }
       />
 
-      <Tabs defaultValue="guru">
-        <TabsList>
+      <Tabs defaultValue="guru" className="w-full">
+        <TabsList className="grid grid-cols-3 w-full max-w-md bg-slate-100 p-1">
           <TabsTrigger value="guru">
             <GraduationCap className="mr-2 h-4 w-4" />
-            Guru ({teachers.length})
+            Guru
           </TabsTrigger>
           <TabsTrigger value="mapel">
             <BookOpen className="mr-2 h-4 w-4" />
-            Mata Pelajaran ({subjects.length})
+            Mapel
+          </TabsTrigger>
+          <TabsTrigger value="penugasan">
+            <Settings2 className="mr-2 h-4 w-4" />
+            Penugasan
           </TabsTrigger>
         </TabsList>
 
@@ -49,22 +75,28 @@ export default async function GuruPage() {
                   .slice(0, 2)
                   .toUpperCase();
                 return (
-                  <Card key={teacher.id} className="hover:shadow-md transition-shadow">
+                  <Card key={teacher.id} className="hover:shadow-md transition-all duration-200 border-slate-100 group relative">
                     <CardContent className="flex items-center gap-4 p-5">
-                      <Avatar className="h-12 w-12">
-                        <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                      <Avatar className="h-12 w-12 border-2 border-white ring-2 ring-red-50">
+                        <AvatarImage src={teacher.photo_url} className="object-cover" />
+                        <AvatarFallback className="bg-red-50 text-[#8B0000] font-bold">
                           {initials}
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0 flex-1">
-                        <p className="font-semibold truncate">{teacher.full_name}</p>
-                        <Badge variant="secondary" className="text-xs mt-1">
+                        <p className="font-bold truncate text-slate-900">{teacher.full_name}</p>
+                        <Badge variant="secondary" className="text-[10px] mt-1 bg-red-50 text-[#8B0000] hover:bg-red-100 border-0">
                           {ROLE_LABELS[teacher.role]}
                         </Badge>
                         {teacher.phone && (
-                          <p className="text-xs text-muted-foreground mt-1">{teacher.phone}</p>
+                          <p className="text-[10px] text-muted-foreground mt-1 font-medium">{teacher.phone}</p>
                         )}
                       </div>
+                      {canManageTeachers && (
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <TeacherEditForm teacher={teacher} />
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 );
@@ -80,27 +112,58 @@ export default async function GuruPage() {
         </TabsContent>
 
         <TabsContent value="mapel" className="mt-6">
+          <div className="flex justify-between items-center mb-6">
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold">Daftar Mata Pelajaran</h3>
+              <p className="text-sm text-muted-foreground">Kelola kurikulum mata pelajaran per kelas.</p>
+            </div>
+            <SubjectFormWrapper />
+          </div>
+
           {subjects.length > 0 ? (
-            <Card>
+            <Card className="border-slate-100 overflow-hidden">
               <CardContent className="p-0">
                 <Table>
-                  <TableHeader>
+                  <TableHeader className="bg-slate-50">
                     <TableRow>
-                      <TableHead className="w-12">No</TableHead>
+                      <TableHead className="w-12 text-center">No</TableHead>
                       <TableHead>Kode</TableHead>
                       <TableHead>Nama Mata Pelajaran</TableHead>
-                      <TableHead>Kelas</TableHead>
+                      <TableHead>Level Kelas</TableHead>
+                      <TableHead className="w-24 text-center print:hidden">Aksi</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {subjects.map((subject, i) => (
                       <TableRow key={subject.id}>
-                        <TableCell className="text-muted-foreground">{i + 1}</TableCell>
+                        <TableCell className="text-center text-muted-foreground font-medium text-xs">{i + 1}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="font-mono">{subject.code}</Badge>
+                          <Badge variant="outline" className="font-mono text-xs border-slate-200 bg-white">{subject.code}</Badge>
                         </TableCell>
-                        <TableCell className="font-medium">{subject.name}</TableCell>
-                        <TableCell>Kelas {subject.grade_level}</TableCell>
+                        <TableCell className="font-semibold text-slate-800">{subject.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-0">
+                            Kelas {subject.grade_level}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center print:hidden">
+                          <div className="flex justify-center gap-1">
+                            <SubjectFormWrapper subject={subject} mode="edit" />
+                            <form action={async () => {
+                              'use server';
+                              await deleteSubject(subject.id);
+                            }}>
+                              <Button 
+                                type="submit" 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </form>
+                          </div>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -114,6 +177,16 @@ export default async function GuruPage() {
               description="Tambahkan mata pelajaran untuk memulai pengelolaan kurikulum."
             />
           )}
+        </TabsContent>
+
+        <TabsContent value="penugasan" className="mt-6">
+          <AssignmentManager 
+            teachers={teachers}
+            subjects={subjects}
+            classes={classes}
+            semesters={semesters}
+            assignments={assignments}
+          />
         </TabsContent>
       </Tabs>
     </div>

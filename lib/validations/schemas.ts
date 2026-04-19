@@ -36,6 +36,7 @@ export const studentSchema = z.object({
   parent_name: z.string().min(2, { message: 'Nama orang tua minimal 2 karakter' }),
   parent_phone: z.string().optional(),
   status: z.enum(['aktif', 'pindah', 'lulus', 'keluar']).default('aktif'),
+  class_id: z.string().uuid({ message: 'Pilih kelas yang valid' }).optional(),
 });
 
 export const attendanceSchema = z.object({

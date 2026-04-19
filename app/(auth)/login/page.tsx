@@ -15,10 +15,10 @@ export default function LoginPage() {
   return (
     <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
       <CardHeader className="text-center pb-2 pt-8">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1e3a5f] to-[#2a5080] shadow-lg">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#8B0000] to-[#b91c1c] shadow-lg">
           <GraduationCap className="h-8 w-8 text-white" />
         </div>
-        <CardTitle className="text-2xl font-bold text-[#1e3a5f]">
+        <CardTitle className="text-2xl font-bold text-[#8B0000]">
           Sistem Akademik
         </CardTitle>
         <CardDescription className="text-base text-muted-foreground">
@@ -45,7 +45,7 @@ export default function LoginPage() {
                 type="email"
                 placeholder="nama@sekolah.id"
                 required
-                className="pl-10 h-11"
+                className="pl-10 h-11 border-muted focus-visible:ring-[#8B0000]"
               />
             </div>
             {state?.errors?.email && (
@@ -65,7 +65,7 @@ export default function LoginPage() {
                 type="password"
                 placeholder="Masukkan password"
                 required
-                className="pl-10 h-11"
+                className="pl-10 h-11 border-muted focus-visible:ring-[#8B0000]"
               />
             </div>
             {state?.errors?.password && (
@@ -74,7 +74,7 @@ export default function LoginPage() {
             <div className="flex justify-end">
               <Link 
                 href="/forgot-password" 
-                className="text-xs text-[#1e3a5f] hover:underline font-medium"
+                className="text-xs text-[#8B0000] hover:underline font-medium"
               >
                 Lupa password?
               </Link>
@@ -84,7 +84,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={pending}
-            className="w-full h-11 bg-gradient-to-r from-[#1e3a5f] to-[#2a5080] hover:from-[#162d4a] hover:to-[#1e3a5f] text-white font-medium shadow-lg shadow-blue-900/20 transition-all duration-200"
+            className="w-full h-11 bg-gradient-to-r from-[#8B0000] to-[#b91c1c] hover:from-[#7c0000] hover:to-[#8B0000] text-white font-medium shadow-lg shadow-red-900/20 transition-all duration-200"
           >
             {pending ? (
               <>
@@ -99,7 +99,7 @@ export default function LoginPage() {
 
         <div className="mt-6 text-center text-sm">
           <span className="text-muted-foreground">Belum punya akun? </span>
-          <Link href="/register" className="text-[#1e3a5f] hover:underline font-semibold">
+          <Link href="/register" className="text-[#8B0000] hover:underline font-semibold">
             Daftar Sekarang
           </Link>
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useState, useEffect, useActionState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,14 +19,17 @@ import { toast } from 'sonner';
 import { createStudent, updateStudent } from '@/app/actions/students';
 import { RELIGION_OPTIONS } from '@/types';
 import type { Student, ActionResponse } from '@/types';
+import { ImageUpload } from '@/components/shared/image-upload';
 
 interface StudentFormProps {
   student?: Student;
+  classes: any[];
 }
 
-export function StudentForm({ student }: StudentFormProps) {
+export function StudentForm({ student, classes }: StudentFormProps) {
   const router = useRouter();
   const isEditing = !!student;
+  const [photoUrl, setPhotoUrl] = useState(student?.photo_url ?? '');
 
   const boundAction = isEditing
     ? updateStudent.bind(null, student.id)
@@ -81,6 +84,17 @@ export function StudentForm({ student }: StudentFormProps) {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div className="space-y-2 flex flex-col items-center py-4 bg-slate-50/50 rounded-lg border border-dashed border-slate-200">
+              <Label className="text-sm font-bold text-slate-700 self-start px-4 mb-2">Foto Siswa</Label>
+              <ImageUpload 
+                value={photoUrl}
+                onChange={(url) => setPhotoUrl(url)}
+                onRemove={() => setPhotoUrl('')}
+                folder="students"
+              />
+              <input type="hidden" name="photo_url" value={photoUrl} />
             </div>
 
             <div className="space-y-2">
@@ -159,6 +173,25 @@ export function StudentForm({ student }: StudentFormProps) {
                   <SelectItem value="keluar">Keluar</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="class_id">Daftarkan ke Kelas</Label>
+              <Select name="class_id">
+                <SelectTrigger id="class_id">
+                  <SelectValue placeholder="Pilih kelas" />
+                </SelectTrigger>
+                <SelectContent>
+                  {classes.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name} (Kelas {c.grade_level})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Hanya untuk pendaftaran siswa baru.
+              </p>
             </div>
           </CardContent>
         </Card>

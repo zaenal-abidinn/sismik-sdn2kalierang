@@ -66,10 +66,12 @@ export async function saveAttendance(
   return { success: true, message: 'Absensi berhasil disimpan' };
 }
 
-export async function getAttendanceRecap(classId: string, month: number, year: number): Promise<Attendance[]> {
+export async function getAttendanceRecap(
+  classId: string, 
+  startDate: string, 
+  endDate: string
+): Promise<Attendance[]> {
   const supabase = await createClient();
-  const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
-  const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
 
   const { data } = await supabase
     .from('attendances')

@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getStudentById } from '@/app/actions/students';
+import { getClasses } from '@/app/actions/teachers';
 import { PageHeader } from '@/components/shared/page-header';
 import { StudentForm } from '../../_components/student-form';
 
@@ -10,6 +11,7 @@ interface PageProps {
 export default async function EditStudentPage({ params }: PageProps) {
   const { id } = await params;
   const student = await getStudentById(id);
+  const classes = await getClasses();
 
   if (!student) {
     notFound();
@@ -21,7 +23,7 @@ export default async function EditStudentPage({ params }: PageProps) {
         title="Edit Data Siswa"
         description={`${student.full_name} — NIS: ${student.nis}`}
       />
-      <StudentForm student={student} />
+      <StudentForm student={student} classes={classes} />
     </div>
   );
 }

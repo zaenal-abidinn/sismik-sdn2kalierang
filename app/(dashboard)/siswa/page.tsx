@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
   title: 'Data Siswa | Sistem Akademik SD N 2 Kalierang',
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search } from 'lucide-react';
 import { PageHeader } from '@/components/shared/page-header';
+import { PrintButton } from '@/components/shared/print-button';
 import { StudentTable } from './_components/student-table';
 import { getStudents } from '@/app/actions/students';
 
@@ -17,6 +19,17 @@ interface PageProps {
 
 export default async function SiswaPage({ searchParams }: PageProps) {
   const params = await searchParams;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('user_id', user?.id)
+    .single();
+
+  const isGuru = profile?.role === 'guru';
+
   const { data: students, total } = await getStudents({
     search: params.search,
     status: params.status,
@@ -27,12 +40,17 @@ export default async function SiswaPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <PageHeader
         title="Data Siswa"
-        description="Kelola data siswa SD N 2 Kalierang"
+        description={isGuru ? "Daftar siswa di kelas Anda" : "Kelola data siswa SD N 2 Kalierang"}
         action={
-          <Button render={<Link href="/siswa/tambah" />}>
-            <Plus className="mr-2 h-4 w-4" />
-            Tambah Siswa
-          </Button>
+          <div className="flex gap-2">
+            <PrintButton className="print:hidden" />
+            {!isGuru && (
+              <Button render={<Link href="/siswa/tambah" />}>
+                <Plus className="mr-2 h-4 w-4" />
+                Tambah Siswa
+              </Button>
+            )}
+          </div>
         }
       />
 

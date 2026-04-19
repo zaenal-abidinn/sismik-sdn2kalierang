@@ -15,6 +15,7 @@ import {
   UserCircle,
   LogOut,
   ChevronUp,
+  Bell,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -35,7 +36,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { logout } from '@/app/actions/auth';
 import type { Profile, UserRole } from '@/types';
@@ -57,6 +58,12 @@ const menuItems: MenuItem[] = [
     title: 'Dashboard',
     url: '/dashboard',
     icon: LayoutDashboard,
+    roles: ['superadmin', 'kepala_sekolah', 'guru', 'tata_usaha'],
+  },
+  {
+    title: 'Pengumuman',
+    url: '/pengumuman',
+    icon: Bell,
     roles: ['superadmin', 'kepala_sekolah', 'guru', 'tata_usaha'],
   },
   {
@@ -93,7 +100,7 @@ const menuItems: MenuItem[] = [
     title: 'Guru & Mapel',
     url: '/guru',
     icon: GraduationCap,
-    roles: ['superadmin', 'kepala_sekolah'],
+    roles: ['superadmin', 'kepala_sekolah', 'tata_usaha'],
   },
   {
     title: 'Kalender Akademik',
@@ -176,6 +183,7 @@ export function AppSidebar({ profile }: AppSidebarProps) {
             <DropdownMenu>
               <DropdownMenuTrigger render={<SidebarMenuButton className="h-14 px-3" />}>
                   <Avatar className="h-8 w-8">
+                    <AvatarImage src={profile.photo_url || undefined} className="object-cover" />
                     <AvatarFallback className="bg-sidebar-primary/20 text-sidebar-primary text-xs font-semibold">
                       {initials}
                     </AvatarFallback>

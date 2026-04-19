@@ -49,39 +49,39 @@
 }
 
 :root {
-  /* Deep blue school theme */
-  --background: oklch(0.985 0.002 250);
-  --foreground: oklch(0.17 0.02 260);
+  /* SD Red Theme (Merah Tua, Putih, Hitam) */
+  --background: oklch(1 0 0); /* White */
+  --foreground: oklch(0.15 0 0); /* Near Black */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.17 0.02 260);
+  --card-foreground: oklch(0.15 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.17 0.02 260);
-  --primary: oklch(0.32 0.08 255);
-  --primary-foreground: oklch(0.985 0.002 250);
-  --secondary: oklch(0.955 0.012 250);
-  --secondary-foreground: oklch(0.32 0.08 255);
-  --muted: oklch(0.96 0.008 250);
-  --muted-foreground: oklch(0.50 0.02 260);
-  --accent: oklch(0.94 0.02 250);
-  --accent-foreground: oklch(0.25 0.06 255);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.90 0.01 250);
-  --input: oklch(0.90 0.01 250);
-  --ring: oklch(0.50 0.10 255);
-  --chart-1: oklch(0.55 0.15 255);
-  --chart-2: oklch(0.65 0.18 160);
-  --chart-3: oklch(0.72 0.15 50);
-  --chart-4: oklch(0.60 0.20 310);
-  --chart-5: oklch(0.75 0.12 80);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.25 0.06 255);
-  --sidebar-foreground: oklch(0.92 0.01 250);
-  --sidebar-primary: oklch(0.75 0.12 210);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.30 0.06 255);
-  --sidebar-accent-foreground: oklch(0.92 0.01 250);
-  --sidebar-border: oklch(0.35 0.05 255);
-  --sidebar-ring: oklch(0.50 0.10 255);
+  --popover-foreground: oklch(0.15 0 0);
+  --primary: oklch(0.35 0.15 25); /* Deep Red */
+  --primary-foreground: oklch(1 0 0); /* White */
+  --secondary: oklch(0.95 0.01 25); /* Very Light Red/Pinkish White */
+  --secondary-foreground: oklch(0.35 0.15 25);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.95 0.01 25);
+  --accent-foreground: oklch(0.35 0.15 25);
+  --destructive: oklch(0.5 0.2 25);
+  --border: oklch(0.9 0 0);
+  --input: oklch(0.9 0 0);
+  --ring: oklch(0.35 0.15 25);
+  --chart-1: oklch(0.35 0.15 25);
+  --chart-2: oklch(0.5 0.15 25);
+  --chart-3: oklch(0.6 0.15 25);
+  --chart-4: oklch(0.7 0.15 25);
+  --chart-5: oklch(0.8 0.15 25);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.35 0.15 25); /* Deep Red Sidebar */
+  --sidebar-foreground: oklch(1 0 0); /* White text on red sidebar */
+  --sidebar-primary: oklch(1 0 0);
+  --sidebar-primary-foreground: oklch(0.35 0.15 25);
+  --sidebar-accent: oklch(0.45 0.15 25);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.3 0.15 25);
+  --sidebar-ring: oklch(1 0 0);
 }
 
 @layer base {
