@@ -5,10 +5,11 @@ import { id } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Bell, Trash2, User, Calendar } from 'lucide-react';
+import { Bell, Trash2, User, Calendar, Edit2 } from 'lucide-react';
 import { deleteAnnouncement } from '@/app/actions/announcements';
 import { toast } from 'sonner';
 import { EmptyState } from '@/components/shared/empty-state';
+import { AnnouncementFormWrapper } from './announcement-form-wrapper';
 
 interface AnnouncementListProps {
   announcements: any[];
@@ -57,14 +58,33 @@ export function AnnouncementList({ announcements, canManage }: AnnouncementListP
               </CardTitle>
             </div>
             {canManage && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-slate-300 hover:text-destructive hover:bg-destructive/10 h-8 w-8"
-                onClick={() => handleDelete(item.id)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-1">
+                <AnnouncementFormWrapper 
+                  initialData={{
+                    id: item.id,
+                    title: item.title,
+                    content: item.content,
+                    target_role: item.target_role
+                  }}
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-slate-300 hover:text-blue-600 hover:bg-blue-50 h-8 w-8"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                  }
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-slate-300 hover:text-destructive hover:bg-destructive/10 h-8 w-8"
+                  onClick={() => handleDelete(item.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
             )}
           </CardHeader>
           <CardContent>

@@ -56,8 +56,69 @@ export async function createAnnouncement(
   return { success: true, message: 'Pengumuman berhasil diterbitkan' };
 }
 
+export async function updateAnnouncement(
+  id: string,
+  _prevState: ActionResponse | undefined,
+  formData: FormData
+): Promise<ActionResponse> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) return { success: false, message: 'Unauthorized' };
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id, role')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile || !['superadmin', 'kepala_sekolah', 'tata_usaha'].includes(profile.role)) {
+    return { success: false, message: 'Hanya Admin, Kepsek, atau TU yang bisa mengubah pengumuman' };
+  }
+
+  const title = formData.get('title') as string;
+  const content = formData.get('content') as string;
+  const target_role = formData.get('target_role') as string;
+
+  if (!title || !content) {
+    return { success: false, message: 'Judul dan isi pengumuman harus diisi' };
+  }
+
+  const { error } = await supabase
+    .from('announcements')
+    .update({
+      title,
+      content,
+      target_role,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', id);
+
+  if (error) {
+    return { success: false, message: `Gagal mengubah pengumuman: ${error.message}` };
+  }
+
+  revalidatePath('/pengumuman');
+  revalidatePath('/');
+  return { success: true, message: 'Pengumuman berhasil diperbarui' };
+}
+
 export async function deleteAnnouncement(id: string): Promise<ActionResponse> {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) return { success: false, message: 'Unauthorized' };
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile || !['superadmin', 'kepala_sekolah', 'tata_usaha'].includes(profile.role)) {
+    return { success: false, message: 'Hanya Admin, Kepsek, atau TU yang bisa menghapus pengumuman' };
+  }
+
   const { error } = await supabase.from('announcements').delete().eq('id', id);
 
   if (error) {
