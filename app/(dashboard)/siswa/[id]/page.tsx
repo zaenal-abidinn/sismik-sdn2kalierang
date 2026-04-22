@@ -10,6 +10,9 @@ import { Pencil, User, Phone, MapPin, BookOpen } from 'lucide-react';
 import { GENDER_LABELS } from '@/types';
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
+import { RaporGenerator } from './_components/rapor-generator';
+import { getSemesters } from '@/app/actions/teachers';
+import { createClient } from '@/lib/supabase/server';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -22,6 +25,12 @@ export default async function StudentDetailPage({ params }: PageProps) {
   if (!student) {
     notFound();
   }
+
+  const semesters = await getSemesters();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: profile } = await supabase.from('profiles').select('role').eq('user_id', user?.id).single();
+  const canGenerate = ['superadmin', 'kepala_sekolah', 'guru'].includes(profile?.role || '');
 
   const statusColors: Record<string, string> = {
     aktif: 'bg-emerald-100 text-emerald-700',
@@ -125,20 +134,29 @@ export default async function StudentDetailPage({ params }: PageProps) {
         </Card>
       </div>
 
-      {/* Academic History placeholder */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-primary" />
-            Riwayat Akademik
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8 text-muted-foreground text-sm">
-            Data riwayat akademik akan ditampilkan di sini
-          </div>
-        </CardContent>
-      </Card>
+      {/* Academic History & Rapor */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary" />
+              Riwayat Akademik
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8 text-muted-foreground text-sm">
+              Data riwayat akademik akan ditampilkan di sini
+            </div>
+          </CardContent>
+        </Card>
+
+        {canGenerate && (
+          <RaporGenerator 
+            studentId={student.id} 
+            semesters={semesters.map(s => ({ id: s.id, name: s.name }))} 
+          />
+        )}
+      </div>
     </div>
   );
 }

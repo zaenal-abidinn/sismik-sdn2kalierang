@@ -110,13 +110,15 @@ export function AssignmentManager({
                       onValueChange={(val) => handleUpdateHomeroom(cls.id, val || 'none')}
                       disabled={loading === `homeroom-${cls.id}`}
                     >
-                      <SelectTrigger className="h-9">
+                      <SelectTrigger className="bg-white h-11 border-slate-200 focus:ring-red-100 transition-all">
                         <SelectValue placeholder="Pilih Guru" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">Kosongkan</SelectItem>
+                        <SelectItem value="none" className="py-2.5 text-slate-500 italic">Kosongkan</SelectItem>
                         {teachers.map((t) => (
-                          <SelectItem key={t.id} value={t.id}>{t.full_name}</SelectItem>
+                          <SelectItem key={t.id} value={t.id} className="py-2.5">
+                            <span className="font-medium">{t.full_name}</span>
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

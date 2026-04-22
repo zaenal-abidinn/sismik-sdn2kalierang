@@ -103,12 +103,6 @@ const menuItems: MenuItem[] = [
     roles: ['superadmin', 'kepala_sekolah', 'tata_usaha'],
   },
   {
-    title: 'Kalender Akademik',
-    url: '/kalender',
-    icon: CalendarDays,
-    roles: ['superadmin', 'kepala_sekolah', 'guru', 'tata_usaha'],
-  },
-  {
     title: 'Manajemen Pengguna',
     url: '/pengguna',
     icon: UserCog,

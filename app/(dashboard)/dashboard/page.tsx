@@ -10,9 +10,9 @@ import {
   Users,
   GraduationCap,
   ClipboardCheck,
-  CalendarDays,
   BookOpen,
   BarChart3,
+  Bell,
 } from 'lucide-react';
 import { StatCard } from './_components/stat-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,10 +45,10 @@ export default async function DashboardPage() {
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'guru'),
     supabase.from('attendances').select('status').eq('date', today),
     supabase
-      .from('academic_events')
+      .from('announcements')
       .select('*')
-      .gte('end_date', today)
-      .order('start_date', { ascending: true })
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
       .limit(5),
     supabase
       .from('attendances')
@@ -83,10 +83,9 @@ export default async function DashboardPage() {
   const greetingName = profile.full_name.split(' ')[0];
 
   const eventTypeColors: Record<string, string> = {
-    libur: 'bg-red-100 text-red-700 border-red-200',
-    ujian: 'bg-amber-100 text-amber-700 border-amber-200',
-    kegiatan: 'bg-blue-100 text-blue-700 border-blue-200',
-    rapat: 'bg-purple-100 text-purple-700 border-purple-200',
+    semua: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    guru: 'bg-amber-100 text-amber-700 border-amber-200',
+    siswa: 'bg-blue-100 text-blue-700 border-blue-200',
   };
 
   return (
@@ -119,10 +118,10 @@ export default async function DashboardPage() {
           icon={ClipboardCheck}
         />
         <StatCard
-          title="Agenda Mendatang"
+          title="Pengumuman Terbaru"
           value={upcomingEvents?.length ?? 0}
-          description="Kegiatan yang akan datang"
-          icon={CalendarDays}
+          description="Informasi & agenda sekolah"
+          icon={Bell}
         />
         {profile.role !== 'kepala_sekolah' && (
           <StatCard
@@ -177,8 +176,8 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <CalendarDays className="h-4 w-4 text-primary" />
-              Agenda Mendatang
+              <Bell className="h-4 w-4 text-primary" />
+              Pengumuman Terbaru
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -191,10 +190,10 @@ export default async function DashboardPage() {
                   >
                     <div className="flex flex-col items-center justify-center min-w-[3rem] h-12 rounded-lg bg-primary/10 text-primary">
                       <span className="text-xs font-medium leading-none">
-                        {format(new Date(event.start_date), 'dd', { locale: idLocale })}
+                        {format(new Date(event.created_at), 'dd', { locale: idLocale })}
                       </span>
                       <span className="text-[10px] uppercase mt-0.5">
-                        {format(new Date(event.start_date), 'MMM', { locale: idLocale })}
+                        {format(new Date(event.created_at), 'MMM', { locale: idLocale })}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -202,12 +201,12 @@ export default async function DashboardPage() {
                       <div className="flex items-center gap-2 mt-1">
                         <Badge
                           variant="outline"
-                          className={`text-[10px] ${eventTypeColors[event.event_type] || ''}`}
+                          className={`text-[10px] capitalize ${eventTypeColors[event.target_role] || ''}`}
                         >
-                          {EVENT_TYPE_LABELS[event.event_type]}
+                          {event.target_role}
                         </Badge>
                         <span className="text-xs text-muted-foreground">
-                          {format(new Date(event.start_date), 'dd/MM/yyyy')}
+                          {format(new Date(event.created_at), 'dd/MM/yyyy')}
                         </span>
                       </div>
                     </div>

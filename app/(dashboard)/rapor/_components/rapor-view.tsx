@@ -51,20 +51,29 @@ export function RaporView({ semesters }: RaporViewProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Select value={semesterId} onValueChange={(v) => v && setSemesterId(v)}>
-          <SelectTrigger className="w-full sm:w-[220px]">
-            <SelectValue placeholder="Pilih Semester" />
-          </SelectTrigger>
-          <SelectContent>
-            {semesters.map((s) => (
-              <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button onClick={loadReportCards} disabled={!semesterId || loading}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-slate-50/50 p-6 rounded-2xl items-end border border-slate-100 shadow-sm">
+        <div className="space-y-2.5">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            Pilih Semester
+          </label>
+          <Select value={semesterId} onValueChange={(v) => v && setSemesterId(v)}>
+            <SelectTrigger className="bg-white h-11 border-slate-200 focus:ring-red-100 transition-all">
+              <SelectValue placeholder="Pilih Semester" />
+            </SelectTrigger>
+            <SelectContent>
+              {semesters.map((s) => (
+                <SelectItem key={s.id} value={s.id} className="py-2.5">{s.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button 
+          onClick={loadReportCards} 
+          disabled={!semesterId || loading}
+          className="bg-[#8B0000] hover:bg-[#7c0000] h-11 shadow-lg shadow-red-900/20 w-full transition-all active:scale-[0.98]"
+        >
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          Tampilkan
+          Tampilkan Daftar Rapor
         </Button>
       </div>
 

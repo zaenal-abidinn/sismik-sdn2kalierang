@@ -95,49 +95,71 @@ export function GradeView({ classes, subjects, semesters }: GradeViewProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-3 items-end">
-        <div className="w-full sm:w-auto">
-          <Label className="text-xs text-muted-foreground mb-1 block">Kelas</Label>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-slate-50/50 p-6 rounded-2xl items-end border border-slate-100 shadow-sm">
+        <div className="space-y-2.5">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+            Target Kelas
+          </label>
           <Select value={classId} onValueChange={(v) => v && setClassId(v)}>
-            <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectTrigger className="bg-white h-11 border-slate-200 focus:ring-red-100 transition-all">
               <SelectValue placeholder="Pilih Kelas" />
             </SelectTrigger>
             <SelectContent>
               {classes.map((c) => (
-                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                <SelectItem key={c.id} value={c.id} className="py-2.5">
+                  Kelas {c.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <div className="w-full sm:w-auto">
-          <Label className="text-xs text-muted-foreground mb-1 block">Mata Pelajaran</Label>
+
+        <div className="space-y-2.5">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+            Mata Pelajaran
+          </label>
           <Select value={subjectId} onValueChange={(v) => v && setSubjectId(v)}>
-            <SelectTrigger className="w-full sm:w-[200px]">
+            <SelectTrigger className="bg-white h-11 border-slate-200 focus:ring-red-100 transition-all">
               <SelectValue placeholder="Pilih Mapel" />
             </SelectTrigger>
             <SelectContent>
               {subjects.map((s) => (
-                <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                <SelectItem key={s.id} value={s.id} className="py-2.5">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-medium">{s.name}</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-mono">{s.code}</span>
+                  </div>
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <div className="w-full sm:w-auto">
-          <Label className="text-xs text-muted-foreground mb-1 block">Semester</Label>
+
+        <div className="space-y-2.5">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+            Semester Aktif
+          </label>
           <Select value={semesterId} onValueChange={(v) => v && setSemesterId(v)}>
-            <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectTrigger className="bg-white h-11 border-slate-200 focus:ring-red-100 transition-all">
               <SelectValue placeholder="Pilih Semester" />
             </SelectTrigger>
             <SelectContent>
               {semesters.map((s) => (
-                <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                <SelectItem key={s.id} value={s.id} className="py-2.5">
+                  {s.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={loadData} disabled={!classId || !subjectId || !semesterId || loading}>
+
+        <Button 
+          onClick={loadData} 
+          disabled={!classId || !subjectId || !semesterId || loading}
+          className="bg-[#8B0000] hover:bg-[#7c0000] h-11 shadow-lg shadow-red-900/20 w-full transition-all active:scale-[0.98]"
+        >
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          Tampilkan
+          Tampilkan Data
         </Button>
       </div>
 
