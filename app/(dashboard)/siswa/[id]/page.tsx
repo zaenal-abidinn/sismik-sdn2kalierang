@@ -31,7 +31,6 @@ export default async function StudentDetailPage({ params }: PageProps) {
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = await supabase.from('profiles').select('role').eq('user_id', user?.id).single();
   const canGenerate = ['superadmin', 'kepala_sekolah', 'guru'].includes(profile?.role || '');
-
   const statusColors: Record<string, string> = {
     aktif: 'bg-emerald-100 text-emerald-700',
     pindah: 'bg-amber-100 text-amber-700',

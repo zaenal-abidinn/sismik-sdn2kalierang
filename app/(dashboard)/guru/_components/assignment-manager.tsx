@@ -20,6 +20,7 @@ interface AssignmentManagerProps {
   classes: any[];
   semesters: any[];
   assignments: any[];
+  canManage?: boolean;
 }
 
 export function AssignmentManager({ 
@@ -27,7 +28,8 @@ export function AssignmentManager({
   subjects, 
   classes, 
   semesters, 
-  assignments 
+  assignments,
+  canManage = true
 }: AssignmentManagerProps) {
   const [loading, setLoading] = useState<string | null>(null);
   
@@ -108,7 +110,7 @@ export function AssignmentManager({
                       key={cls.id + (cls.homeroom_teacher_id || 'none')}
                       value={cls.homeroom_teacher_id || 'none'}
                       onValueChange={(val) => handleUpdateHomeroom(cls.id, val || 'none')}
-                      disabled={loading === `homeroom-${cls.id}`}
+                      disabled={loading === `homeroom-${cls.id}` || !canManage}
                     >
                       <SelectTrigger className="bg-white h-11 border-slate-200 focus:ring-red-100 transition-all">
                         <SelectValue placeholder="Pilih Guru" />
@@ -140,7 +142,8 @@ export function AssignmentManager({
           <CardDescription>Tentukan mata pelajaran apa saja yang diampu oleh setiap guru.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 bg-slate-50/50 p-6 rounded-2xl items-end border border-slate-100 shadow-sm">
+          {canManage && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 bg-slate-50/50 p-6 rounded-2xl items-end border border-slate-100 shadow-sm">
             <div className="space-y-2.5">
               <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
                 <Users className="h-3 w-3" /> Guru Pengampu
@@ -242,6 +245,7 @@ export function AssignmentManager({
               )}
             </Button>
           </div>
+          )}
 
           <div className="rounded-xl border border-slate-100 overflow-hidden">
             <Table>
@@ -251,7 +255,7 @@ export function AssignmentManager({
                   <TableHead>Mata Pelajaran</TableHead>
                   <TableHead>Kelas</TableHead>
                   <TableHead>Semester</TableHead>
-                  <TableHead className="w-10"></TableHead>
+                  {canManage && <TableHead className="w-10"></TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -267,17 +271,19 @@ export function AssignmentManager({
                       </TableCell>
                       <TableCell>Kelas {asgn.class?.name}</TableCell>
                       <TableCell className="text-xs text-muted-foreground">{asgn.semester_id?.slice(0, 8)}...</TableCell>
-                      <TableCell>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => handleRemoveAssignment(asgn.id)}
-                          disabled={loading === `remove-${asgn.id}`}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
+                      {canManage && (
+                        <TableCell>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={() => handleRemoveAssignment(asgn.id)}
+                            disabled={loading === `remove-${asgn.id}`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))
                 ) : (

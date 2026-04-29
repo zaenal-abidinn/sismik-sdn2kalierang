@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Plus, Loader2, UserCog } from 'lucide-react';
 import { toast } from 'sonner';
 import { createUser } from '@/app/actions/users';
@@ -145,6 +145,7 @@ export function UserList({ users }: UserListProps) {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar className="h-9 w-9">
+                            {user.photo_url && <AvatarImage src={user.photo_url} alt={user.full_name} />}
                             <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
                               {initials}
                             </AvatarFallback>

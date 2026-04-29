@@ -35,6 +35,7 @@ export default async function GuruPage() {
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = await supabase.from('profiles').select('role').eq('user_id', user?.id).single();
   const canManageTeachers = ['superadmin', 'kepala_sekolah', 'tata_usaha'].includes(profile?.role || '');
+  const canManageAcademic = ['superadmin', 'kepala_sekolah'].includes(profile?.role || '');
 
   return (
     <div className="space-y-6 pb-12">
@@ -117,7 +118,7 @@ export default async function GuruPage() {
               <h3 className="text-lg font-bold">Daftar Mata Pelajaran</h3>
               <p className="text-sm text-muted-foreground">Kelola kurikulum mata pelajaran per kelas.</p>
             </div>
-            <SubjectFormWrapper />
+            {canManageAcademic && <SubjectFormWrapper />}
           </div>
 
           {subjects.length > 0 ? (
@@ -148,20 +149,26 @@ export default async function GuruPage() {
                         </TableCell>
                         <TableCell className="text-center print:hidden">
                           <div className="flex justify-center gap-1">
-                            <SubjectFormWrapper subject={subject} mode="edit" />
-                            <form action={async () => {
-                              'use server';
-                              await deleteSubject(subject.id);
-                            }}>
-                              <Button 
-                                type="submit" 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </form>
+                            {canManageAcademic ? (
+                              <>
+                                <SubjectFormWrapper subject={subject} mode="edit" />
+                                <form action={async () => {
+                                  'use server';
+                                  await deleteSubject(subject.id);
+                                }}>
+                                  <Button 
+                                    type="submit" 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </form>
+                              </>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">-</span>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -186,6 +193,7 @@ export default async function GuruPage() {
             classes={classes}
             semesters={semesters}
             assignments={assignments}
+            canManage={canManageAcademic}
           />
         </TabsContent>
       </Tabs>

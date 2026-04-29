@@ -39,7 +39,7 @@ export async function proxy(request: NextRequest) {
 
   // Public routes that don't need auth
   const publicRoutes = ['/login', '/register', '/forgot-password'];
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
+  const isPublicRoute = pathname === '/' || publicRoutes.some((route) => pathname.startsWith(route));
 
   // If no user and trying to access protected route, redirect to login
   if (!user && !isPublicRoute) {
