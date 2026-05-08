@@ -97,12 +97,7 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <div className="mt-6 text-center text-sm">
-          <span className="text-muted-foreground">Belum punya akun? </span>
-          <Link href="/register" className="text-[#8B0000] hover:underline font-semibold">
-            Daftar Sekarang
-          </Link>
-        </div>
+
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           © 2026 SD Negeri 2 Kalierang. Hak cipta dilindungi.
